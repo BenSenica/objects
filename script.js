@@ -89,8 +89,10 @@ let search = document.getElementById("search");
 let previous = document.getElementById("previous");
 let next = document.getElementById("next");
 let list = document.getElementById("list");
+let randomMove1;
+let randomMove2;
 
-function Pokemon(name, id, moves, abilities, image, weight) {
+/*function Pokemon(name, id, moves, abilities, image, weight) {
     this.name = name;
     this.id = id;
     this.moves = moves;
@@ -98,13 +100,13 @@ function Pokemon(name, id, moves, abilities, image, weight) {
     this.image = image;
     this.weight = weight;
 }
-let currentPokemon = new Pokemon()
-/*let pokemon_name;
+let currentPokemon = new Pokemon()*/
+let pokemon_name;
 let pokemon_id;
 let pokemon_moves;
 let pokemon_abilities;
 let pokemon_image;
-let pokemon_weight;*/
+let pokemon_weight;
 //EventListeners are added to HTML elements.
 search.addEventListener("click", function () {
     LoadPokemon(poke_search.value);
@@ -206,6 +208,7 @@ function DoThingsWithTheDom() {
     document.getElementById("pokemon-image").setAttribute("src", pokemon["pokemon_image"]);
     document.getElementById("pokemon-abilities").innerHTML = pokemon["pokemon_moves"];
     document.getElementById("pokemon-weight").innerHTML = pokemon["pokemon_weight"];
+
 
 }
 document.getElementById("list").innerHTML = LoadPokemonList();
