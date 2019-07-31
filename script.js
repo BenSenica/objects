@@ -89,24 +89,13 @@ let search = document.getElementById("search");
 let previous = document.getElementById("previous");
 let next = document.getElementById("next");
 let list = document.getElementById("list");
-let randomMove1;
-let randomMove2;
-
-/*function Pokemon(name, id, moves, abilities, image, weight) {
-    this.name = name;
-    this.id = id;
-    this.moves = moves;
-    this.abilities = abilities;
-    this.image = image;
-    this.weight = weight;
-}
-let currentPokemon = new Pokemon()*/
 let pokemon_name;
 let pokemon_id;
 let pokemon_moves;
 let pokemon_abilities;
 let pokemon_image;
 let pokemon_weight;
+
 //EventListeners are added to HTML elements.
 search.addEventListener("click", function () {
     LoadPokemon(poke_search.value);
@@ -117,29 +106,29 @@ poke_search.addEventListener("keyup", function (event) {
     }
 })
 previous.addEventListener("click", function () {
-    if (pokemon["pokemon_id"] === undefined) {
-        pokemon["pokemon_id"] = 2;
+    if (pokemon_id === undefined) {
+        pokemon_id = 2;
     }
-    LoadPokemon(--pokemon["pokemon_id"]);
+    LoadPokemon(--pokemon_id);
 });
 next.addEventListener("click", function () {
-    if (pokemon["pokemon_id"] === undefined) {
-        pokemon["pokemon_id"] = 0;
+    if (pokemon_id === undefined) {
+        pokemon_id = 0;
     }
-    LoadPokemon(++pokemon["pokemon_id"]);
+    LoadPokemon(++pokemon_id);
 })
 //Function that looks up the data for a pokemon when it's given the pokemon's name or id number.
-function LoadPokemon(pokemons) {
+function LoadPokemon(pokemon) {
     let request = new XMLHttpRequest();
     let dots = 1;
     request.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status == 200 && pokemons !== "") {
+        if (this.readyState === 4 && this.status == 200 && pokemon !== "") {
             SetVariables(JSON.parse(this.responseText));
         } else {
             SetVariables(dots++);
         }
     }
-    request.open("GET", base_url + "pokemons/" + pokemons.toString().toLowerCase(), true);
+    request.open("GET", base_url + "pokemon/" + pokemon.toString().toLowerCase(), true);
     request.send();
 }
 //This function changes the variables with the most recent pokemon's information.
@@ -148,12 +137,12 @@ function SetVariables(data) {
         console.log("Searching for data" + ".".repeat(data))
     } else {
         console.log("Data found!")
-        pokemon["pokemon_name"] = data.name;
-        pokemon["pokemon_id"] = data.id;
-        pokemon["pokemon_moves"] = data.moves.map(x => x.move.name);
-        pokemon["pokemon_abilities"] = data.abilities.map(x => x.ability.name);
-        pokemon["pokemon_image"] = data.sprites.front_default;
-        pokemon["pokemon_weight"] = data.weight;
+        pokemon_name = data.name;
+        pokemon_id = data.id;
+        pokemon_moves = data.moves.map(x => x.move.name);
+        pokemon_abilities = data.abilities.map(x => x.ability.name);
+        pokemon_image = data.sprites.front_default;
+        pokemon_weight = data.weight;
         DoThingsWithTheDom();
     }
 }
@@ -165,9 +154,9 @@ function LoadPokemonList() {
     request.onreadystatechange = function () {
         if (this.readyState === 4 && this.status == 200) {
             let pokemon_list = JSON.parse(this.responseText).results.map(x => x.name);
-            for (pokemons of pokemon_list) {
+            for (pokemon of pokemon_list) {
                 let li = document.createElement("li");
-                li.innerHTML = pokemons;
+                li.innerHTML = pokemon;
                 li.addEventListener("click", function () {
                     LoadPokemon(this.innerHTML);
                 })
@@ -175,15 +164,15 @@ function LoadPokemonList() {
             }
         }
     }
-    request.open("GET", base_url + "pokemons?offset=0&limit=807", true);
+    request.open("GET", base_url + "pokemon?offset=0&limit=807", true);
     request.send();
 }
 //Function that you can call to see the current pokemon's information
 function LogPokeData() {
-    console.log("Name: " + pokemon.pokemon_name +
-        "\n" + "ID: " + pokemon.pokemon_id +
-        "\n" + "Moves:", pokemon["pokemon_moves"], "\n" + "Abilities:", pokemon["pokemon_abilities"], "\n" + "Image URL: " + pokemon["pokemon_image"] +
-        "\n" + "Weight: " + pokemon["pokemon_weight"]);
+    console.log("Name: " + pokemon_name +
+        "\n" + "ID: " + pokemon_id +
+        "\n" + "Moves:", pokemon_moves, "\n" + "Abilities:", pokemon_abilities, "\n" + "Image URL: " + pokemon_image +
+        "\n" + "Weight: " + pokemon_weight);
 }
 /*==================================================================================================
 ======================================== Magic Ends Here! ==========================================
@@ -202,13 +191,15 @@ function DoThingsWithTheDom() {
     You can do this by placing empty tags in your HTML, and the assigning their content with JS.
     But you can also generate the HTML with document.createElement().
     */
+    let randomMove1 = pokemon_moves[Math.floor(Math.random() * pokemon_moves.length)];
+    let randomMove2 = pokemon_moves[Math.floor(Math.random() * pokemon_moves.length)];
 
-    document.getElementById("pokemon-name").innerHTML = pokemon["pokemon_name"];
-    document.getElementById("pokemon-id").innerHTML = pokemon["pokemon_id"];
-    document.getElementById("pokemon-image").setAttribute("src", pokemon["pokemon_image"]);
-    document.getElementById("pokemon-abilities").innerHTML = pokemon["pokemon_moves"];
-    document.getElementById("pokemon-weight").innerHTML = pokemon["pokemon_weight"];
-
+    console.log(randomMove1, randomMove2);
+    document.getElementById("pokemon-name").innerHTML = pokemon_name;
+    document.getElementById("pokemon-id").innerHTML = pokemon_id;
+    document.getElementById("pokemon-image").setAttribute("src", pokemon_image);
+    document.getElementById("pokemon-abilities").innerHTML = pokemon_moves;
+    document.getElementById("pokemon-weight").innerHTML = pokemon_weight;
 
 }
 document.getElementById("list").innerHTML = LoadPokemonList();
