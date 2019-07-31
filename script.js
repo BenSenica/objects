@@ -78,3 +78,134 @@ document.getElementById("btnSister").addEventListener("click", function () {
         state = true;
     }
 })
+
+/*==================================================================================================
+        ======================================== Magic Happens Here! =======================================
+        ==================================================================================================*/
+//Variables are declared.
+let base_url = "https://pokeapi.co/api/v2/";
+let poke_search = document.getElementById("pokesearch");
+let search = document.getElementById("search");
+let previous = document.getElementById("previous");
+let next = document.getElementById("next");
+let list = document.getElementById("list");
+
+function Pokemon(name, id, moves, abilities, image, weight) {
+    this.name = name;
+    this.id = id;
+    this.moves = moves;
+    this.abilities = abilities;
+    this.image = image;
+    this.weight = weight;
+}
+let currentPokemon = new Pokemon()
+/*let pokemon_name;
+let pokemon_id;
+let pokemon_moves;
+let pokemon_abilities;
+let pokemon_image;
+let pokemon_weight;*/
+//EventListeners are added to HTML elements.
+search.addEventListener("click", function () {
+    LoadPokemon(poke_search.value);
+});
+poke_search.addEventListener("keyup", function (event) {
+    if (event.key === "Enter") {
+        LoadPokemon(poke_search.value);
+    }
+})
+previous.addEventListener("click", function () {
+    if (pokemon["pokemon_id"] === undefined) {
+        pokemon["pokemon_id"] = 2;
+    }
+    LoadPokemon(--pokemon["pokemon_id"]);
+});
+next.addEventListener("click", function () {
+    if (pokemon["pokemon_id"] === undefined) {
+        pokemon["pokemon_id"] = 0;
+    }
+    LoadPokemon(++pokemon["pokemon_id"]);
+})
+//Function that looks up the data for a pokemon when it's given the pokemon's name or id number.
+function LoadPokemon(pokemons) {
+    let request = new XMLHttpRequest();
+    let dots = 1;
+    request.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status == 200 && pokemons !== "") {
+            SetVariables(JSON.parse(this.responseText));
+        } else {
+            SetVariables(dots++);
+        }
+    }
+    request.open("GET", base_url + "pokemons/" + pokemons.toString().toLowerCase(), true);
+    request.send();
+}
+//This function changes the variables with the most recent pokemon's information.
+function SetVariables(data) {
+    if (typeof data === "number") {
+        console.log("Searching for data" + ".".repeat(data))
+    } else {
+        console.log("Data found!")
+        pokemon["pokemon_name"] = data.name;
+        pokemon["pokemon_id"] = data.id;
+        pokemon["pokemon_moves"] = data.moves.map(x => x.move.name);
+        pokemon["pokemon_abilities"] = data.abilities.map(x => x.ability.name);
+        pokemon["pokemon_image"] = data.sprites.front_default;
+        pokemon["pokemon_weight"] = data.weight;
+        DoThingsWithTheDom();
+    }
+}
+//This function loads all of the pokemons and stores them in a list in your HTML.
+//Clicking one of the list items will then look up data for that specific pokemon!
+function LoadPokemonList() {
+    let request = new XMLHttpRequest();
+    list.innerHTML = "";
+    request.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status == 200) {
+            let pokemon_list = JSON.parse(this.responseText).results.map(x => x.name);
+            for (pokemons of pokemon_list) {
+                let li = document.createElement("li");
+                li.innerHTML = pokemons;
+                li.addEventListener("click", function () {
+                    LoadPokemon(this.innerHTML);
+                })
+                list.append(li);
+            }
+        }
+    }
+    request.open("GET", base_url + "pokemons?offset=0&limit=807", true);
+    request.send();
+}
+//Function that you can call to see the current pokemon's information
+function LogPokeData() {
+    console.log("Name: " + pokemon.pokemon_name +
+        "\n" + "ID: " + pokemon.pokemon_id +
+        "\n" + "Moves:", pokemon["pokemon_moves"], "\n" + "Abilities:", pokemon["pokemon_abilities"], "\n" + "Image URL: " + pokemon["pokemon_image"] +
+        "\n" + "Weight: " + pokemon["pokemon_weight"]);
+}
+/*==================================================================================================
+======================================== Magic Ends Here! ==========================================
+==================================================================================================*/
+function DoThingsWithTheDom() {
+    /*
+    Write your code here!
+    The following variables contain data for you to use. Be careful with the data types (some are numbers, some are strings and some are arrays)! 
+        pokemon_name
+        pokemon_id
+        pokemon_moves
+        pokemon_abilities
+        pokemon_image
+        pokemon_weight
+    The goal of the exercise is for you to display this information in your HTML.
+    You can do this by placing empty tags in your HTML, and the assigning their content with JS.
+    But you can also generate the HTML with document.createElement().
+    */
+
+    document.getElementById("pokemon-name").innerHTML = pokemon["pokemon_name"];
+    document.getElementById("pokemon-id").innerHTML = pokemon["pokemon_id"];
+    document.getElementById("pokemon-image").setAttribute("src", pokemon["pokemon_image"]);
+    document.getElementById("pokemon-abilities").innerHTML = pokemon["pokemon_moves"];
+    document.getElementById("pokemon-weight").innerHTML = pokemon["pokemon_weight"];
+
+}
+document.getElementById("list").innerHTML = LoadPokemonList();
