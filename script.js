@@ -37,3 +37,44 @@ document.getElementById("btnSister").addEventListener("click", function () {
     document.getElementById("sisterimg").src = "/white-pawn.png"
 });
 */
+var onfather = "/white-king.png";
+var onMother = "/white-queen.png";
+var onSister = "/white-pawn.png"
+var off = "";
+var state = false;
+var fatherimg = document.getElementById("fatherimg");
+var motherimg = document.getElementById("motherimg");
+var sisterimg = document.getElementById("sisterimg");
+var btnfather = document.getElementById("btnfather");
+var btnmother = document.getElementById("btnmother");
+var btnsister = document.getElementById("btnsister");
+
+document.getElementById("btnFather").addEventListener("click", function () {
+    if (state) {
+        fatherimg.src = off;
+        state = false;
+    } else {
+        fatherimg.src = onfather;
+        state = true;
+    }
+})
+
+document.getElementById("btnMother").addEventListener("click", function () {
+    if (state) {
+        motherimg.src = off;
+        state = false;
+    } else {
+        motherimg.src = onMother;
+        state = true;
+    }
+})
+
+document.getElementById("btnSister").addEventListener("click", function () {
+    if (state) {
+        sisterimg.src = off;
+        state = false;
+    } else {
+        sisterimg.src = onSister;
+        state = true;
+    }
+})
